@@ -1,7 +1,6 @@
 package com.artillexstudios.axafkzone.selection;
 
 import com.artillexstudios.axafkzone.zones.Zone;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -28,27 +27,29 @@ public class Region {
     }
 
     public Set<Player> getPlayersInZone() {
-        if (world == null) return Set.of();
+        if (world == null || world.getPlayers().isEmpty()) return Set.of();
         final HashSet<Player> players = new HashSet<>();
 
+        int x1 = Math.min(corner1.getBlockX(), corner2.getBlockX());
+        int y1 = Math.min(corner1.getBlockY(), corner2.getBlockY());
+        int z1 = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
+        int x2 = Math.max(corner1.getBlockX(), corner2.getBlockX());
+        int y2 = Math.max(corner1.getBlockY(), corner2.getBlockY());
+        int z2 = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+
         String permission = zone.getSettings().getString("permission");
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : world.getPlayers()) {
             if (player.isDead()) continue;
-            if (!player.getWorld().equals(world)) continue;
             if (!permission.isBlank() && !player.hasPermission(permission)) continue;
 
             final Location loc = player.getLocation();
 
-            int x1 = Math.min(corner1.getBlockX(), corner2.getBlockX());
-            int y1 = Math.min(corner1.getBlockY(), corner2.getBlockY());
-            int z1 = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
-            int x2 = Math.max(corner1.getBlockX(), corner2.getBlockX());
-            int y2 = Math.max(corner1.getBlockY(), corner2.getBlockY());
-            int z2 = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+            if (loc.getBlockX() >= x1 && loc.getBlockX() <= x2 &&
+                loc.getBlockY() >= y1 && loc.getBlockY() <= y2 &&
+                loc.getBlockZ() >= z1 && loc.getBlockZ() <= z2) {
 
-            if (!(loc.getBlockX() >= x1 && loc.getBlockX() <= x2 && loc.getBlockY() >= y1 && loc.getBlockY() <= y2 && loc.getBlockZ() >= z1 && loc.getBlockZ() <= z2)) continue;
-
-            players.add(player);
+                players.add(player);
+            }
         }
 
         return players;

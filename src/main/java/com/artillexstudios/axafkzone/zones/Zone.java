@@ -180,7 +180,7 @@ public class Zone {
 
         int barDirection = CONFIG.getInt("bossbar-direction", 0);
         float calculated = (float) (time % rewardSeconds) / (rewardSeconds - 1);
-        bossBar.progress(Math.max(0f, Math.min(1f, barDirection == 0 ? 1f - calculated : calculated)));
+        bossBar.progress(Math.clamp(barDirection == 0 ? 1f - calculated : calculated, 0f, 1f));
 
         Section section;
         if ((section = settings.getSection("in-zone.bossbar")) != null) {
