@@ -1,5 +1,5 @@
 name: AxAFKZone
-version: '${project.version}'
+version: ${version}
 main: com.artillexstudios.axafkzone.AxAFKZone
 api-version: '1.20'
 folia-supported: true
